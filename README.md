@@ -2,11 +2,17 @@
     <img src="./images/DialogIcon.png">
 </div>
 <p align="center">
+	<strong>适用于Compose的Dialog</strong>
+</p>
+<p align="center">
 	<a href="https://chen-xi-g.github.io/">使用文档</a>
 	| 
 	<a href="app/release/verve-dialog-sample.apk">下载Demo</a>
 </p>
 
+<p align="center">
+  <a href="https://jitpack.io/#Chen-Xi-g/VerveDialog"><img src="https://jitpack.io/v/Chen-Xi-g/VerveDialog.svg"/></a>
+</p>
 
 一个基于 Jetpack Compose 的高度可定制化 Dialog 库，适用于 Android 应用。它支持普通对话框和底部对话框（BottomSheet），并提供了多种 UI 组件，用于创建交互式对话框，包括标题、图标标题、消息、输入框、单选、多选列表等。通过全局配置和灵活的 API，您可以轻松调整对话框的样式和功能，以适应您的应用设计需求。
 
