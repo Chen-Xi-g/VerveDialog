@@ -6,7 +6,7 @@ plugins {
 
 val GROUP_ID = "com.verve.dialog"
 val ARTIFACT_ID = "core"
-val VERSION = "1.0.0-beta.2"
+val VERSION = "1.0.0-beta.3"
 
 group = GROUP_ID
 version = VERSION
@@ -31,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
