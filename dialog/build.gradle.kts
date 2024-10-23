@@ -6,7 +6,7 @@ plugins {
 
 val GROUP_ID = "com.verve.dialog"
 val ARTIFACT_ID = "core"
-val VERSION = "1.0.0"
+val VERSION = "1.0.0-beta.2"
 
 group = GROUP_ID
 version = VERSION
