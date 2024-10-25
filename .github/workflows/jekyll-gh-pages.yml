@@ -45,11 +45,13 @@ jobs:
         working-directory: docs
       - name: List build output
         run: ls
+        working-directory: docs
       - name: Create site
         run: mkdir -p _site
         working-directory: docs
       - name: List build output 2
         run: ls
+        working-directory: docs
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
