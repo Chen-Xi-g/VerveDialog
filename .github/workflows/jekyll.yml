@@ -41,19 +41,23 @@ jobs:
           cache-version: 0 # Increment this number if you need to re-download cached gems
       - name: Install dependencies
         run: bundle install
-        working-directory: docs
+        working-directory: ./docs
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
-        working-directory: docs
+        working-directory: ./docs
         env:
           JEKYLL_ENV: production
+      - name: List build output
+        run: ls -R ./docs/_site
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/_site
 
   # Deployment job
   deploy:
