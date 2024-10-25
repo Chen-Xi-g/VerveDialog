@@ -1,7 +1,7 @@
 /* custom css for the footer */
 @font-face {
   font-family: 'AliHealth';
-  src: url('{{ site.baseurl }}/assets/fonts/AliHealth.ttf') format('truetype');
+  src: url('../fonts/AliHealth.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
