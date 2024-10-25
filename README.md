@@ -33,7 +33,7 @@
 
 ```kotlin
 dependencies {
-		implementation("com.github.Chen-Xi-g:VerveDialog:Tag")
+     implementation("com.github.Chen-Xi-g:VerveDialog:Tag")
 }
 ```
 
