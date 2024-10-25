@@ -1,0 +1,38 @@
+<script src="/assets/js/tabs.js"></script>
+
+<p align="center">
+  <strong>如果你觉得这个内容对你有帮助，欢迎点击“Star”或分享给朋友！如果你觉得不错，也可以给作者买个馒头哦！</strong>
+</p>
+<p align="center">
+  <img src="/assets/images/alipay-qrcode.JPG" height = "400" width = "300">
+  <img src="/assets/images/wechat-qrcode.JPG" height = "400" width = "300">
+</p>
+
+{% if page.usetocbot %} 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.30.0/tocbot.min.js"></script>
+
+<script>
+  let sideBarElements = document.getElementsByClassName('side-bar');
+  if (sideBarElements.length > 0){
+    let tocNav = document.createElement('nav');
+    tocNav.setAttribute("id", "tocbot-toc");
+    tocNav.classList.add("js-toc");
+    tocNav.classList.add("tocbot-right");
+    sideBarElements[0].after(tocNav);
+  }
+  tocbot.init({
+    tocSelector: '.js-toc',
+    contentSelector: '.main-content',
+    collapseDepth: 2,
+    headingSelector: 'h1, h2, h3, h4',
+  });
+  var onScrollHandler = function (event) {
+    if (window.pageYOffset > 100) {
+      window.removeEventListener('scroll', onScrollHandler, false);
+      document.getElementById("tocbot-toc").style.visibility = "visible";
+    }
+  };
+	window.addEventListener('scroll', onScrollHandler, false);
+</script>
+{% endif %}

@@ -1,0 +1,284 @@
+/* custom css for the footer */
+@font-face {
+  font-family: 'AliHealth';
+  src: url('/assets/fonts/AliHealth.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'AliHealth', serif;
+}
+
+h1, h2, h3, h4, h5, .site-title, .site-nav {
+  font-family: 'AliHealth', sans-serif; /* 保持原有设置 */
+}
+
+.footer-logos{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 15px;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+}
+
+.footer-logos img{
+  max-height: 60px;
+}
+
+.footer-logos a{
+  text-decoration: none;
+  background-image: none;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 16px;
+}
+
+blockquote{
+  margin: 2em 1em 2em 0;
+  padding-left: 1em;
+  padding-right: 1em;
+  font-style: italic;
+  font-size: 22px;
+  border-left: 0.25em solid #6f777d;
+}
+
+blockquote.block-quote--small {
+  font-size: 16px; /* Override font-size for the variant */
+}
+
+blockquote.note,
+blockquote.warning,
+blockquote.info,
+blockquote.important,
+blockquote.highlight,
+blockquote.new {
+  font-size: initial;
+  font-style: normal;
+}
+
+blockquote.note-title,
+blockquote.warning-title,
+blockquote.info-title,
+blockquote.important-title,
+blockquote.highlight-title,
+blockquote.new-title {
+  font-size: initial;
+  font-style: normal;
+}
+
+/* I had to add this in otherwise we were getting weird line breaks on links. The just-the-docs css sets
+this to white-space: no-wrap. Not sure why. See: https://developer.mozilla.org/en-US/docs/Web/CSS/white-space */
+.main-content a{
+  white-space: normal;
+}
+
+.margin-zero{
+  margin: 0;
+}
+
+.text-right{
+  text-align: right;
+}
+
+cite{
+  text-align: right;
+  font-size: smaller;
+}
+
+/* to add a margin at the bottom of our code blocks */
+figure.highlight {
+  margin-bottom: 1em;
+} 
+
+/* Without this, the gist it script's prettify font is too large */
+.gist-it-gist{
+  font-size: small;
+}
+
+.width-100{
+  width: 100%;
+}
+
+.img-50{
+  width: 50px;
+}
+
+/** FOR TABLES **/ 
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:nth-child(even) td,
+table tr:nth-child(even) th {
+  background-color: inherit;
+}
+
+/** FOR SMALL TABLES **/
+.condensed-table{
+  min-width: 0px;
+}
+
+.condensed-table th, td{
+  min-width: 0px;
+  font-size: 12px !important;
+}
+
+.table-max-width300 {
+  max-width: 300px;
+  min-width: 0px;
+  overflow-x: auto; /* This will add a scrollbar if the content exceeds 300px */
+}
+
+/** VIBRATION TABLE **/
+.vibro-table{
+  min-width: 0px;
+  padding: 0.25rem;
+}
+
+.vibro-table th, td{
+  padding: 0.25rem;
+  min-width: 0px;
+  font-size: 12px !important;
+}
+
+.vibro-table img{
+  width: 60px !important;
+  min-width: 60px;
+}
+
+/* image align center */
+/* See: https://mmistakes.github.io/minimal-mistakes/docs/utility-classes/
+/* https://github.com/mmistakes/minimal-mistakes/blob/a2385e25840f38d573d057f427396eaf09f41e81/_sass/minimal-mistakes/_utilities.scss */
+.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.test-css{
+  font-size: 14 pt;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/**** FOR TOCBOT ******/
+/** See: https://tscanlin.github.io/tocbot/ **/
+#tocbot-toc{
+  position: fixed !important;
+  visibility: hidden;
+  top: 90px;
+  left: calc((100% - 1064px) / 2 + 264px + 800px); 
+  width:250px;
+  right: 0px;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+#tocbot-toc ol {
+  list-style: none;
+}
+
+/**** FOR EMBEDDED YOUTUBE VIDEOS TO BE RESPONSIVE ****/
+/** See: https://youtu.be/9YffrCViTVk **/
+.iframe-container{
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; 
+  height: 0;
+}
+.iframe-container iframe{
+  position: absolute;
+  top:0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.tab {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -20px;
+    padding: 0;
+    list-style: none;
+    position: relative;
+}
+
+.tab > * {
+    flex: none;
+    padding-left: 0px;
+    position: relative;
+}
+
+.tab > * > a {
+    display: block;
+    text-align: center;
+    padding: 9px 20px;
+    color: #999;
+    border: 2px solid #f5f6fa;
+    border-color: #f5f6fa;
+    font-size: 14px;
+    transition: color .1s ease-in-out;
+    line-height: 20px;
+}
+
+.tab > .active > a {
+    color:#1e87f0;
+    border-color: #1e87f0;
+}
+
+.tab > li > a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tab-content {
+    padding: 0;
+}
+
+.tab-content > li {
+    display: none;
+}
+.tab-content > li.active {
+    display: block;
+}
+
+/* The 2 following blocks can be removed if the script is not configured to show the toast message */
+#jekyll-tabs-copy-to-clipboard-message {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    right: 50%;
+    bottom: 30px;
+}
+
+#jekyll-tabs-copy-to-clipboard-message.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+ul.tab li::before {
+    content: none !important;
+}
+ul.tab-content li::before {
+    content: none !important;
+}
+ul.tab-content {
+    padding-left: 0;
+}
