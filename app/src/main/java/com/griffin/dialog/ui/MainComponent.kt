@@ -6,10 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowColumn
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,12 +22,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.griffin.dialog.DialogIntent
 import com.griffin.dialog.MainViewModel
 import com.griffin.dialog.R
-import com.griffin.dialog.ui.theme.VerveDialogTheme
+import com.verve.dialog.rememberBottomDialogState
 import com.verve.dialog.rememberDialogState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,19 +39,13 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
     val notKeyboardDialogState = rememberDialogState()
     val showKeyboardDialogState = rememberDialogState()
     val stringSingleChoiceDialog = rememberDialogState()
-    val entitySingleChoiceDialog = rememberDialogState()
     val stringMultiChoiceDialog = rememberDialogState()
-    val entityMultiChoiceDialog = rememberDialogState()
-    val bottomTitleDialogState = rememberDialogState()
-    val bottomIconTitleDialogState = rememberDialogState()
-    val bottomEnablePositiveDialogState = rememberDialogState()
-    val bottomMoreButtonDialogState = rememberDialogState()
-    val bottomNotKeyboardDialogState = rememberDialogState()
-    val bottomShowKeyboardDialogState = rememberDialogState()
-    val bottomStringSingleChoiceDialog = rememberDialogState()
-    val bottomEntitySingleChoiceDialog = rememberDialogState()
-    val bottomStringMultiChoiceDialog = rememberDialogState()
-    val bottomEntityMultiChoiceDialog = rememberDialogState()
+    val bottomDefaultDialogState = rememberBottomDialogState()
+    val bottomIconTitleDialogState = rememberBottomDialogState()
+    val bottomNotKeyboardDialogState = rememberBottomDialogState()
+    val bottomShowKeyboardDialogState = rememberBottomDialogState()
+    val bottomStringSingleChoiceDialog = rememberBottomDialogState()
+    val bottomStringMultiChoiceDialog = rememberBottomDialogState()
     LaunchedEffect(Unit) {
         viewModel.dialogIntent.collectLatest {
             when (it) {
@@ -79,31 +76,11 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
                     stringSingleChoiceDialog.isVisible = it.isShow
                 }
 
-                is DialogIntent.EntitySingleChoiceDialog -> {
-                    entitySingleChoiceDialog.isVisible = it.isShow
-                }
-
-                is DialogIntent.EntityMultiChoiceDialog -> {
-                    entityMultiChoiceDialog.isVisible = it.isShow
-                }
                 is DialogIntent.StringMultiChoiceDialog -> {
                     stringMultiChoiceDialog.isVisible = it.isShow
                 }
-
-                is DialogIntent.BottomEnablePositiveDialog -> {
-                    bottomEnablePositiveDialogState.isVisible = it.isShow
-                }
-                is DialogIntent.BottomEntityMultiChoiceDialog -> {
-                    bottomEntityMultiChoiceDialog.isVisible = it.isShow
-                }
-                is DialogIntent.BottomEntitySingleChoiceDialog -> {
-                    bottomEntitySingleChoiceDialog.isVisible = it.isShow
-                }
                 is DialogIntent.BottomIconTitleDialog -> {
                     bottomIconTitleDialogState.isVisible = it.isShow
-                }
-                is DialogIntent.BottomMoreButtonDialog -> {
-                    bottomMoreButtonDialogState.isVisible = it.isShow
                 }
                 is DialogIntent.BottomNotKeyboardDialog -> {
                     bottomNotKeyboardDialogState.isVisible = it.isShow
@@ -117,8 +94,8 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
                 is DialogIntent.BottomStringSingleChoiceDialog -> {
                     bottomStringSingleChoiceDialog.isVisible = it.isShow
                 }
-                is DialogIntent.BottomTitleDialog -> {
-                    bottomTitleDialogState.isVisible = it.isShow
+                is DialogIntent.BottomDefaultDialog -> {
+                    bottomDefaultDialogState.isVisible = it.isShow
                 }
             }
         }
@@ -130,19 +107,13 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
     NotKeyboard(state = notKeyboardDialogState)
     ShowKeyboard(state = showKeyboardDialogState)
     StringSingleChoiceDialog(state = stringSingleChoiceDialog)
-    EntitySingleChoiceDialog(state = entitySingleChoiceDialog)
     StringMultiChoiceDialog(state = stringMultiChoiceDialog)
-    EntityMultiChoiceDialog(state = entityMultiChoiceDialog)
-    BottomTitleDialog(state = bottomTitleDialogState)
+    BottomDefaultDialog(state = bottomDefaultDialogState)
     BottomIconTitleDialog(state = bottomIconTitleDialogState)
-    BottomEnablePositiveDialog(state = bottomEnablePositiveDialogState)
-    BottomMoreButtonDialog(state = bottomMoreButtonDialogState)
     BottomNotKeyboard(state = bottomNotKeyboardDialogState)
     BottomShowKeyboard(state = bottomShowKeyboardDialogState)
     BottomStringSingleChoiceDialog(state = bottomStringSingleChoiceDialog)
-    BottomEntitySingleChoiceDialog(state = bottomEntitySingleChoiceDialog)
     BottomStringMultiChoiceDialog(state = bottomStringMultiChoiceDialog)
-    BottomEntityMultiChoiceDialog(state = bottomEntityMultiChoiceDialog)
     DialogSample(viewModel = viewModel)
 }
 
@@ -178,22 +149,14 @@ fun DialogSample(viewModel: MainViewModel) {
                 viewModel.showDialog(DialogIntent.StringSingleChoiceDialog(true))
             }
 
-            7 -> {
-                viewModel.showDialog(DialogIntent.EntitySingleChoiceDialog(true))
-            }
-
-            8 ->{
+            7 ->{
                 viewModel.showDialog(DialogIntent.StringMultiChoiceDialog(true))
-            }
-
-            9 ->{
-                viewModel.showDialog(DialogIntent.EntityMultiChoiceDialog(true))
             }
         }
     }) {
         when (it) {
             0 -> {
-                viewModel.showDialog(DialogIntent.BottomTitleDialog(true))
+                viewModel.showDialog(DialogIntent.BottomDefaultDialog(true))
             }
 
             1 -> {
@@ -201,45 +164,30 @@ fun DialogSample(viewModel: MainViewModel) {
             }
 
             2 -> {
-                viewModel.showDialog(DialogIntent.BottomEnablePositiveDialog(true))
-            }
-
-            3 -> {
-                viewModel.showDialog(DialogIntent.BottomMoreButtonDialog(true))
-            }
-
-            4 -> {
                 viewModel.showDialog(DialogIntent.BottomNotKeyboardDialog(true))
             }
 
-            5 -> {
+            3 -> {
                 viewModel.showDialog(DialogIntent.BottomShowKeyboardDialog(true))
             }
 
-            6 -> {
+            4 -> {
                 viewModel.showDialog(DialogIntent.BottomStringSingleChoiceDialog(true))
             }
 
-            7 -> {
-                viewModel.showDialog(DialogIntent.BottomEntitySingleChoiceDialog(true))
-            }
-
-            8 ->{
+            5 ->{
                 viewModel.showDialog(DialogIntent.BottomStringMultiChoiceDialog(true))
-            }
-
-            9 ->{
-                viewModel.showDialog(DialogIntent.BottomEntityMultiChoiceDialog(true))
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun DialogList(clickCallback: (position: Int) -> Unit, bottomClickCallback: (position: Int) -> Unit) {
-    val defList = mutableListOf("普通弹窗", "标题带Icon弹窗", "PositiveButton不可点击", "多按钮弹窗", "输入框弹窗-不弹出软键盘", "输入框弹窗-弹出软键盘", "字符串单选弹窗", "实体类单选弹窗", "字符串多选弹窗", "实体类多选弹窗")
-    val bottomList = mutableListOf("底部弹窗", "底部标题带Icon弹窗", "底部PositiveButton不可点击", "底部多按钮弹窗", "底部输入框弹窗-不弹出软键盘", "底部输入框弹窗-弹出软键盘", "底部字符串单选弹窗", "底部实体类单选弹窗", "底部字符串多选弹窗", "底部实体类多选弹窗")
+    val defList = mutableListOf("默认弹窗", "Icon Title", "禁用Positive", "多按钮", "输入框-不显示软键盘", "输入框-显示软键盘", "单选", "多选")
+    val bottomList = mutableListOf("默认弹窗", "Icon Title", "输入框-不显示软键盘", "输入框-显示软键盘", "单选框", "多选框")
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -265,13 +213,14 @@ fun DialogList(clickCallback: (position: Int) -> Unit, bottomClickCallback: (pos
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        items(defList.size) {
-            Button(
-                modifier = Modifier
-                    .clickable(onClick = { clickCallback(it) }),
-                onClick = { clickCallback(it) },
+
+        item {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
             ) {
-                Text(text = defList[it])
+                for ((index, item) in defList.withIndex()) {
+                    AssistChip(onClick = { clickCallback(index) }, label = { Text(text = item) })
+                }
             }
         }
 
@@ -287,13 +236,13 @@ fun DialogList(clickCallback: (position: Int) -> Unit, bottomClickCallback: (pos
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        items(bottomList.size) {
-            Button(
-                modifier = Modifier
-                    .clickable(onClick = { bottomClickCallback(it) }),
-                onClick = { bottomClickCallback(it) },
+        item {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
             ) {
-                Text(text = bottomList[it])
+                for ((index, item) in bottomList.withIndex()) {
+                    AssistChip(onClick = { bottomClickCallback(index) }, label = { Text(text = item) })
+                }
             }
         }
     }

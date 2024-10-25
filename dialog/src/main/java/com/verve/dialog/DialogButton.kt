@@ -1,11 +1,12 @@
 package com.verve.dialog
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,7 +18,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import java.util.Locale
 
 /**
  * 设置Dialog按钮的布局ID
@@ -129,6 +129,7 @@ class DialogButtonLayout(private val dialogScope: DialogScope) {
                 }
 
                 dialogScope.dismissCallback.values.forEach { it() }
+                dialogScope.customCallback.values.forEach { it() }
                 onClick()
             },
             modifier = Modifier.layoutId(TextButtonLayoutId.Positive),
@@ -156,7 +157,7 @@ class DialogButtonLayout(private val dialogScope: DialogScope) {
         colors: ButtonColors = ButtonDefaults.textButtonColors(),
         onClick: () -> Unit = {}
     ) {
-        val displayedText = getString(res, buttonText).uppercase(Locale.ROOT)
+        val displayedText = getString(res, buttonText)
         val focusManager = LocalFocusManager.current
 
         TextButton(
@@ -173,4 +174,67 @@ class DialogButtonLayout(private val dialogScope: DialogScope) {
         }
     }
 
+}
+
+/**
+ * Bottom Sheet Dialog 按钮
+ */
+@Composable
+fun DialogScope.PositiveButton(
+    buttonText: String? = null,
+    @StringRes res: Int? = null,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    preventDismiss: Boolean = false,
+    onClick: () -> Unit = {}
+) {
+    val displayedText = getString(res, buttonText)
+    val isButtonEnabled = isPositiveButtonEnabled.values.all { it }
+
+    Button(
+        onClick = {
+            if (autoClose && !preventDismiss) {
+                state.dismiss()
+            }
+
+            dismissCallback.values.forEach { it() }
+            customCallback.values.forEach { it() }
+            onClick()
+        },
+        modifier = modifier,
+        enabled = isButtonEnabled,
+        colors = colors
+    ) {
+        Text(text = displayedText, style = textStyle)
+    }
+}
+
+/**
+ * Bottom Sheet Dialog 按钮
+ */
+@Composable
+fun DialogScope.NegativeButton(
+    buttonText: String? = null,
+    @StringRes res: Int? = null,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
+    colors: ButtonColors = ButtonDefaults.filledTonalButtonColors(),
+    onClick: () -> Unit = {}
+) {
+    val displayedText = getString(res, buttonText)
+
+    FilledTonalButton(
+        onClick = {
+            if (autoClose) {
+                state.dismiss()
+            }
+            customCallback.values.forEach { it() }
+            onClick()
+        },
+        modifier = modifier,
+        colors = colors
+    ) {
+        Text(text = displayedText, style = textStyle)
+    }
 }

@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -26,18 +25,35 @@ fun rememberDialogState(visible: Boolean = false): DialogState {
     }
 }
 
+/**
+ * 创建BottomDialogScope
+ *
+ * @param visible Dialog是否显示
+ */
+@Composable
+fun rememberBottomDialogState(visible: Boolean = false): BottomDialogState {
+    return rememberSaveable(saver = BottomDialogState.Saver()) {
+        BottomDialogState(visible)
+    }
+}
+
 
 /**
  * 定义Dialog内容参数的值和函数的接口
  */
 interface DialogScope {
-    val state: DialogState
+    val state: DialogStateCommon
     val buttonLayout: DialogButtonLayout
 
     /**
-     * 对话框关闭回调
+     * 对话框关闭回调，使用DisposableEffect
      */
     val dismissCallback: SnapshotStateMap<Int, () -> Unit>
+
+    /**
+     * 自定义功能回调
+     */
+    val customCallback: SnapshotStateMap<Int, () -> Unit>
 
     /**
      * Positive按钮是否可以点击
@@ -68,12 +84,35 @@ interface DialogScope {
     fun PositiveButtonState(isValid: Boolean)
 
     /**
-     * Dialog回调
+     * Dialog回调，使用DisposableEffect来实现
      *
      * @param onCallback Dialog触发回调的函数
      */
     @Composable
     fun Callback(onCallback: () -> Unit)
+
+    /**
+     * 自定义功能回调
+     *
+     * @param onCallback Dialog触发回调的函数
+     */
+    @Composable
+    fun CustomCallback(onCallback: () -> Unit)
+}
+
+interface DialogStateCommon {
+    var isVisible: Boolean
+    val isBottomSheet: Boolean
+
+    /**
+     * 显示Dialog
+     */
+    fun show()
+
+    /**
+     * 隐藏Dialog
+     */
+    fun dismiss(focusManager: FocusManager? = null)
 }
 
 /**
@@ -81,13 +120,10 @@ interface DialogScope {
  *
  * @param visible Dialog的初始显示状态
  */
-class DialogState(visible: Boolean = false) {
-    var isVisible by mutableStateOf(visible)
-
-    /**
-     * 显示Dialog
-     */
-    fun show() {
+class DialogState(visible: Boolean = false) : DialogStateCommon {
+    override var isVisible by mutableStateOf(visible)
+    override val isBottomSheet: Boolean = false
+    override fun show() {
         isVisible = true
     }
 
@@ -96,7 +132,7 @@ class DialogState(visible: Boolean = false) {
      *
      * @param focusManager 需要清除的焦点
      */
-    fun dismiss(focusManager: FocusManager? = null) {
+    override fun dismiss(focusManager: FocusManager?) {
         focusManager?.clearFocus()
         isVisible = false
     }
@@ -109,14 +145,50 @@ class DialogState(visible: Boolean = false) {
     }
 }
 
+/**
+ * 存储底部Dialog的状态
+ */
+class BottomDialogState(visible: Boolean = false) : DialogStateCommon {
+    override var isVisible by mutableStateOf(visible)
+    override val isBottomSheet: Boolean = true
+
+    /**
+     * 显示Dialog
+     */
+    override fun show() {
+        isVisible = true
+    }
+
+    /**
+     * 清除FocusManager焦点，然后隐藏Dialog.
+     *
+     * Bottom隐藏Dialog时需要通过Callback处理，否则没有收起动画。
+     *
+     * @param focusManager 需要清除的焦点
+     */
+    override fun dismiss(focusManager: FocusManager?) {
+        focusManager?.clearFocus()
+    }
+
+    companion object {
+        fun Saver(): Saver<BottomDialogState, *> = Saver(
+            save = { it.isVisible },
+            restore = { BottomDialogState(it) }
+        )
+    }
+}
+
 internal class DialogScopeImpl(
-    override val state: DialogState,
+    override val state: DialogStateCommon,
     override val autoClose: Boolean = true
 ) : DialogScope {
     override val buttonLayout = DialogButtonLayout(this)
 
     override val dismissCallback = mutableStateMapOf<Int, () -> Unit>()
     private val callbackCounter = AtomicInteger(0)
+
+    override val customCallback = mutableStateMapOf<Int, () -> Unit>()
+    private val callbackNotEffectCounter = AtomicInteger(0)
 
     override val isPositiveButtonEnabled = mutableStateMapOf<Int, Boolean>()
     private val positiveEnabledCounter = AtomicInteger(0)
@@ -127,6 +199,7 @@ internal class DialogScopeImpl(
     override fun dismiss() {
         state.dismiss()
         dismissCallback.values.forEach { it() }
+        customCallback.values.forEach { it() }
     }
 
     /**
@@ -135,9 +208,10 @@ internal class DialogScopeImpl(
     override fun reset() {
         isPositiveButtonEnabled.clear()
         dismissCallback.clear()
-
+        customCallback.clear()
         positiveEnabledCounter.set(0)
         callbackCounter.set(0)
+        callbackNotEffectCounter.set(0)
     }
 
     /**
@@ -158,9 +232,9 @@ internal class DialogScopeImpl(
     }
 
     /**
-     * Dialog回调
+     * Dialog回调，使用DisposableEffect
      *
-     * @param onCallback 按下确认按钮时调用的回调
+     * @param onCallback 自定义的回调
      */
     @Composable
     override fun Callback(onCallback: () -> Unit) {
@@ -168,7 +242,21 @@ internal class DialogScopeImpl(
 
         DisposableEffect(Unit) {
             dismissCallback[callbackIndex] = onCallback
-            onDispose { dismissCallback[callbackIndex] = {} }
+            onDispose {
+                dismissCallback[callbackIndex] = {}
+            }
         }
+    }
+
+    /**
+     * 自定义功能回调
+     *
+     * @param onCallback 自定义的回调
+     */
+    @Composable
+    override fun CustomCallback(onCallback: () -> Unit) {
+        val callbackIndex = rememberSaveable { callbackNotEffectCounter.getAndIncrement() }
+
+        customCallback[callbackIndex] = onCallback
     }
 }

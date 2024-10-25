@@ -35,8 +35,6 @@ import androidx.compose.ui.window.DialogProperties
  * @param tonalElevation 颜色调整
  * @param noContentPadding 是否取消内容区域的padding
  * @param autoDismissPositiveButton 点击PositiveButton是否自动关闭Dialog
- * @param bottomHideDrag 底部隐藏拖拽
- * @param enableDrag 是否启用拖拽
  */
 @Stable
 class DialogConfig(
@@ -49,9 +47,7 @@ class DialogConfig(
     var shadowElevation: Dp,
     var tonalElevation: Dp,
     var noContentPadding: Boolean,
-    var autoDismissPositiveButton: Boolean,
-    var bottomHideDrag: Boolean,
-    var enableDrag: Boolean
+    var autoDismissPositiveButton: Boolean
 ) {
     fun copy(
         properties: DialogProperties = this.properties,
@@ -63,9 +59,7 @@ class DialogConfig(
         shadowElevation: Dp = this.shadowElevation,
         tonalElevation: Dp = this.tonalElevation,
         noContentPadding: Boolean = this.noContentPadding,
-        autoDismissPositiveButton: Boolean = this.autoDismissPositiveButton,
-        bottomHideDrag: Boolean = this.bottomHideDrag,
-        enableDrag: Boolean = this.enableDrag
+        autoDismissPositiveButton: Boolean = this.autoDismissPositiveButton
     ): DialogConfig {
         return DialogConfig(
             properties = properties,
@@ -77,9 +71,7 @@ class DialogConfig(
             shadowElevation = shadowElevation,
             tonalElevation = tonalElevation,
             noContentPadding = noContentPadding,
-            autoDismissPositiveButton = autoDismissPositiveButton,
-            bottomHideDrag = bottomHideDrag,
-            enableDrag = enableDrag
+            autoDismissPositiveButton = autoDismissPositiveButton
         )
     }
 
@@ -112,8 +104,6 @@ class DialogConfig(
  * @param tonalElevation 颜色调整
  * @param noContentPadding 是否取消内容区域的padding
  * @param autoDismissPositiveButton 点击PositiveButton是否自动关闭Dialog
- * @param bottomHideDrag 底部隐藏拖拽
- * @param enableDrag 是否启用拖拽
  */
 fun defaultDialogConfig(
     properties: DialogProperties = DialogProperties(),
@@ -125,9 +115,7 @@ fun defaultDialogConfig(
     shadowElevation: Dp = 0.dp,
     tonalElevation: Dp = 0.dp,
     noContentPadding: Boolean = false,
-    autoDismissPositiveButton: Boolean = true,
-    bottomHideDrag: Boolean = false,
-    enableDrag: Boolean = true
+    autoDismissPositiveButton: Boolean = true
 ): DialogConfig = DialogConfig(
     properties = properties,
     backgroundColor = backgroundColor,
@@ -138,7 +126,100 @@ fun defaultDialogConfig(
     shadowElevation = shadowElevation,
     tonalElevation = tonalElevation,
     noContentPadding = noContentPadding,
-    autoDismissPositiveButton = autoDismissPositiveButton,
+    autoDismissPositiveButton = autoDismissPositiveButton
+)
+
+/**
+ * BottomDialog配置
+ *
+ * @param backgroundColor Dialog背景颜色
+ * @param shape Dialog形状
+ * @param padding Dialog内容区域的padding
+ * @param tonalElevation 颜色调整
+ * @param noContentPadding 是否取消内容区域的padding
+ * @param autoDismiss 触发事件后是否自动关闭
+ */
+@Stable
+class BottomDialogConfig(
+    var properties: DialogProperties,
+    var backgroundColor: Color,
+    var shape: RoundedCornerShape,
+    var padding: PaddingValues,
+    var tonalElevation: Dp,
+    var noContentPadding: Boolean,
+    var autoDismiss: Boolean,
+    var bottomHideDrag: Boolean,
+    var enableDrag: Boolean
+) {
+    fun copy(
+        properties: DialogProperties = this.properties,
+        backgroundColor: Color = this.backgroundColor,
+        shape: RoundedCornerShape = this.shape,
+        padding: PaddingValues = this.padding,
+        tonalElevation: Dp = this.tonalElevation,
+        noContentPadding: Boolean = this.noContentPadding,
+        autoDismiss: Boolean = this.autoDismiss,
+        bottomHideDrag: Boolean = this.bottomHideDrag,
+        enableDrag: Boolean = this.enableDrag
+    ): BottomDialogConfig {
+        return BottomDialogConfig(
+            properties = properties,
+            backgroundColor = backgroundColor,
+            shape = shape,
+            padding = padding,
+            tonalElevation = tonalElevation,
+            noContentPadding = noContentPadding,
+            autoDismiss = autoDismiss,
+            bottomHideDrag = bottomHideDrag,
+            enableDrag = enableDrag
+        )
+    }
+
+    override fun toString(): String {
+        return "BottomDialogConfig(" +
+                "properties=$properties, " +
+                "backgroundColor=$backgroundColor, " +
+                "shape=$shape, " +
+                "padding=$padding, " +
+                "tonalElevation=$tonalElevation, " +
+                "noContentPadding=$noContentPadding, " +
+                "autoDismiss=$autoDismiss, " +
+                "bottomHideDrag=$bottomHideDrag, " +
+                "enableDrag=$enableDrag" +
+                ")"
+    }
+}
+
+/**
+ * 默认的BottomDialog配置
+ *
+ * @param backgroundColor Dialog背景颜色
+ * @param shape Dialog形状
+ * @param padding Dialog内容区域的padding
+ * @param tonalElevation 颜色调整
+ * @param noContentPadding 是否取消内容区域的padding
+ * @param autoDismiss 触发事件后是否自动关闭
+ * @param bottomHideDrag 底部隐藏拖拽
+ * @param enableDrag 是否启用拖拽
+ */
+fun defaultBottomDialogConfig(
+    properties: DialogProperties = DialogProperties(),
+    backgroundColor: Color = Color.White,
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    padding: PaddingValues = PaddingValues(5.dp),
+    tonalElevation: Dp = 0.dp,
+    noContentPadding: Boolean = false,
+    autoDismiss: Boolean = true,
+    bottomHideDrag: Boolean = true,
+    enableDrag: Boolean = true
+): BottomDialogConfig = BottomDialogConfig(
+    properties = properties,
+    backgroundColor = backgroundColor,
+    shape = shape,
+    padding = padding,
+    tonalElevation = tonalElevation,
+    noContentPadding = noContentPadding,
+    autoDismiss = autoDismiss,
     bottomHideDrag = bottomHideDrag,
     enableDrag = enableDrag
 )
@@ -368,6 +449,8 @@ fun defaultDialogInputConfig(
 object DialogGlobalConfig {
     var dialogConfig: DialogConfig by mutableStateOf(defaultDialogConfig())
         private set
+    var bottomDialogConfig: BottomDialogConfig by mutableStateOf(defaultBottomDialogConfig())
+        private set
     var dialogTitleConfig: DialogTitleConfig by mutableStateOf(defaultDialogTitleConfig())
         private set
     var dialogMessageConfig: DialogMessageConfig by mutableStateOf(defaultDialogMessageConfig())
@@ -380,6 +463,13 @@ object DialogGlobalConfig {
      */
     fun updateDialogConfig(config: DialogConfig) {
         dialogConfig = config
+    }
+
+    /**
+     * 更新BottomDialog默认配置
+     */
+    fun updateBottomDialogConfig(config: BottomDialogConfig) {
+        bottomDialogConfig = config
     }
 
     /**
@@ -401,5 +491,19 @@ object DialogGlobalConfig {
      */
     fun updateInputConfig(config: DialogInputConfig) {
         dialogInputConfig = config
+    }
+
+    fun update(
+        dialogConfig: DialogConfig = this.dialogConfig,
+        bottomDialogConfig: BottomDialogConfig = this.bottomDialogConfig,
+        dialogTitleConfig: DialogTitleConfig = this.dialogTitleConfig,
+        dialogMessageConfig: DialogMessageConfig = this.dialogMessageConfig,
+        dialogInputConfig: DialogInputConfig = this.dialogInputConfig
+    ) {
+        this.dialogConfig = dialogConfig
+        this.bottomDialogConfig = bottomDialogConfig
+        this.dialogTitleConfig = dialogTitleConfig
+        this.dialogMessageConfig = dialogMessageConfig
+        this.dialogInputConfig = dialogInputConfig
     }
 }

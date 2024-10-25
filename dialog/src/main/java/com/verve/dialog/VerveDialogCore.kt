@@ -1,6 +1,7 @@
 package com.verve.dialog
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,9 +11,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -33,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,10 +40,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Dialog 标题
@@ -174,6 +174,11 @@ fun DialogScope.Input(
 ) {
     var text by remember { mutableStateOf(prefill) }
     val valid = remember(text) { isTextValid(text) }
+    val coroutineScope = if (state.isBottomSheet) {
+        rememberCoroutineScope()
+    } else {
+        null
+    }
 
     PositiveButtonState(isValid = valid)
 
@@ -221,7 +226,14 @@ fun DialogScope.Input(
 
     if (focusOnShow) {
         DisposableEffect(Unit) {
-            focusRequester.requestFocus()
+            if (state.isBottomSheet) {
+                coroutineScope?.launch {
+                    delay(AnimationConstants.DefaultDurationMillis.toLong())
+                    focusRequester.requestFocus()
+                }
+            } else {
+                focusRequester.requestFocus()
+            }
             onDispose { }
         }
     }
@@ -292,7 +304,7 @@ fun DialogScope.SingleChoiceString(
     isEnabled: (index: Int, item: String) -> Boolean = { _, _ -> true },
     initialSelection: Int = -1,
     waitForPositiveButton: Boolean = true,
-    onChoiceChange: (selected: Int, item: String) -> Unit = {_,_ ->}
+    onChoiceChange: (index: Int, item: String) -> Unit
 ) {
     SingleChoice(
         list = list,
@@ -300,8 +312,15 @@ fun DialogScope.SingleChoiceString(
         isEnabled = isEnabled,
         initialSelection = initialSelection,
         waitForPositiveButton = waitForPositiveButton,
-        onChoiceChange = onChoiceChange
-    ){ _, item, enabled ->
+        onChoiceChange = onChoiceChange,
+        radioButton = { index, _, selected, enabled, onClick ->
+            RadioButton(
+                selected = selected,
+                onClick = onClick,
+                enabled = enabled
+            )
+        },
+    ) { _, item, enabled ->
         Text(
             item,
             color = if (enabled) {
@@ -323,6 +342,8 @@ fun DialogScope.SingleChoiceString(
  * @param initialSelection 初始化选择的Item
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
  * @param onChoiceChange 选择回调
+ * @param radioButton 单选按钮布局
+ * @param choiceText 选择文本布局
  */
 @Composable
 fun <T> DialogScope.SingleChoice(
@@ -331,7 +352,8 @@ fun <T> DialogScope.SingleChoice(
     isEnabled: (index: Int, item: T) -> Boolean = { _, _ -> true },
     initialSelection: Int = -1,
     waitForPositiveButton: Boolean = true,
-    onChoiceChange: (selected: Int, item: T) -> Unit = {_, _ ->},
+    onChoiceChange: (index: Int, item: T) -> Unit,
+    radioButton: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onClick: () -> Unit) -> Unit,
     choiceText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
 ) {
     var selectedItem by remember { mutableIntStateOf(initialSelection) }
@@ -371,6 +393,7 @@ fun <T> DialogScope.SingleChoice(
             selected = selected,
             enabled = enabled,
             onSelect = onSelect,
+            radioButton = radioButton,
             choiceText = choiceText
         )
     }
@@ -393,6 +416,7 @@ fun <T> SingleChoiceItem(
     selected: Boolean,
     enabled: Boolean,
     onSelect: (index: Int) -> Unit,
+    radioButton: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onClick: () -> Unit) -> Unit,
     choiceText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
 ) {
     Row(
@@ -400,15 +424,7 @@ fun <T> SingleChoiceItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        RadioButton(
-            selected = selected,
-            onClick = {
-                if (enabled) {
-                    onSelect(index)
-                }
-            },
-            enabled = enabled
-        )
+        radioButton(index, item, selected, enabled) { onSelect(index) }
         choiceText(index, item, enabled)
     }
 }
@@ -421,7 +437,7 @@ fun <T> SingleChoiceItem(
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item索引集合
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
- * @param onCheckedChange 选择回调
+ * @param onChoiceChange 选择回调
  */
 @Composable
 fun DialogScope.MultiChoiceString(
@@ -430,7 +446,7 @@ fun DialogScope.MultiChoiceString(
     isEnabled: (index: Int, item: String) -> Boolean = { _, _ -> true },
     initialSelection: Set<Int> = setOf(),
     waitForPositiveButton: Boolean = true,
-    onCheckedChange: (indices: Set<Int>, items: Set<String>,) -> Unit = {_,_ ->}
+    onChoiceChange: (indices: Set<Int>, items: Set<String>) -> Unit
 ) {
     MultiChoice(
         list = list,
@@ -438,7 +454,14 @@ fun DialogScope.MultiChoiceString(
         isEnabled = isEnabled,
         initialSelection = initialSelection,
         waitForPositiveButton = waitForPositiveButton,
-        onCheckedChange = onCheckedChange
+        onChoiceChange = onChoiceChange,
+        checkBox = { index, item, selected, enabled, onCheckedChange ->
+            Checkbox(
+                checked = selected,
+                onCheckedChange = onCheckedChange,
+                enabled = enabled
+            )
+        },
     ) { _, item, enabled ->
         Text(
             item,
@@ -460,7 +483,7 @@ fun DialogScope.MultiChoiceString(
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item索引集合
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
- * @param onCheckedChange 选择回调
+ * @param onChoiceChange 选择回调
  * @param checkedText 选择文本布局
  */
 @Composable
@@ -470,17 +493,18 @@ fun <T> DialogScope.MultiChoice(
     isEnabled: (index: Int, item: T) -> Boolean = { _, _ -> true },
     initialSelection: Set<Int> = setOf(),
     waitForPositiveButton: Boolean = true,
-    onCheckedChange: (indices: Set<Int>, items: Set<T>) -> Unit = {_,_ ->},
+    onChoiceChange: (indices: Set<Int>, items: Set<T>) -> Unit,
+    checkBox: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onCheckedChange: ((Boolean) -> Unit)?) -> Unit,
     checkedText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
 ) {
     var selectedItems by remember { mutableStateOf(initialSelection) }
 
     if (waitForPositiveButton) {
-        Callback { onCheckedChange(selectedItems, selectedItems.map { list[it] }.toSet()) }
+        Callback { onChoiceChange(selectedItems, selectedItems.map { list[it] }.toSet()) }
     }
 
     val onChecked = { index: Int ->
-        if (isEnabled(index,list[index])) {
+        if (isEnabled(index, list[index])) {
             /* Have to create temp var as mutableState doesn't trigger on adding to set */
             val newSelectedItems = selectedItems.toMutableSet()
             if (index in selectedItems) {
@@ -491,7 +515,7 @@ fun <T> DialogScope.MultiChoice(
             selectedItems = newSelectedItems.toSet()
 
             if (!waitForPositiveButton) {
-                onCheckedChange(selectedItems, selectedItems.map { list[it] }.toSet())
+                onChoiceChange(selectedItems, selectedItems.map { list[it] }.toSet())
             }
         }
     }
@@ -503,7 +527,7 @@ fun <T> DialogScope.MultiChoice(
         isEnabled = isEnabled,
         closeOnClick = false
     ) { index, item ->
-        val enabled = isEnabled(index,list[index])
+        val enabled = isEnabled(index, list[index])
         val selected = remember(selectedItems) { index in selectedItems }
 
         MultiChoiceItem(
@@ -512,6 +536,7 @@ fun <T> DialogScope.MultiChoice(
             selected = selected,
             enabled = enabled,
             onChecked = onChecked,
+            checkBox = checkBox,
             checkedText = checkedText
         )
     }
@@ -534,6 +559,7 @@ fun <T> MultiChoiceItem(
     selected: Boolean,
     enabled: Boolean,
     onChecked: (index: Int) -> Unit,
+    checkBox: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onCheckedChange: ((Boolean) -> Unit)?) -> Unit,
     checkedText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
 ) {
     Row(
@@ -541,7 +567,7 @@ fun <T> MultiChoiceItem(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Checkbox(checked = selected, onCheckedChange = { onChecked(index) }, enabled = enabled)
+        checkBox(index, item, selected, enabled) { onChecked(index) }
         checkedText(index, item, enabled)
     }
 }

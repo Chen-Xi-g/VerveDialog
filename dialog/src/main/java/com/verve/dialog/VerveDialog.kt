@@ -1,16 +1,15 @@
 package com.verve.dialog
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
@@ -27,6 +26,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -75,60 +75,58 @@ fun VerveDialog(
         onDispose { }
     }
 
-    BoxWithConstraints {
-        val maxHeight = LocalConfiguration.current.screenHeightDp.dp
-        val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx().toInt() }
-        val maxWidth = LocalConfiguration.current.screenWidthDp.dp
+    val maxHeight = LocalConfiguration.current.screenHeightDp.dp
+    val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx().toInt() }
+    val maxWidth = LocalConfiguration.current.screenWidthDp.dp
 
-        if (dialogState.isVisible) {
-            Dialog(
-                properties = properties,
-                onDismissRequest = { onDismiss(dialogState) }
+    if (dialogState.isVisible) {
+        Dialog(
+            properties = properties,
+            onDismissRequest = { onDismiss(dialogState) }
+        ) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sizeIn(maxHeight = maxHeight, maxWidth = maxWidth)
+                    .padding(padding)
+                    .wrapContentHeight(),
+                shape = shape,
+                color = backgroundColor,
+                border = border,
+                shadowElevation = shadowElevation,
+                tonalElevation = tonalElevation
             ) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .sizeIn(maxHeight = maxHeight, maxWidth = maxWidth)
-                        .padding(padding)
-                        .wrapContentHeight(),
-                    shape = shape,
-                    color = backgroundColor,
-                    border = border,
-                    shadowElevation = shadowElevation,
-                    tonalElevation = tonalElevation
-                ) {
-                    Layout(
-                        modifier = Modifier.padding(if (notContentPadding) PaddingValues() else contentPadding),
-                        content = {
-                            dialogScope.ButtonsLayout(
-                                modifier = Modifier.layoutId("buttons"),
-                                content = buttons
-                            )
-                            Column(
-                                Modifier.layoutId("content")
-                            ) { content(dialogScope) }
-                        }
-                    ) { measure, constraints ->
-                        val buttonsHeight =
-                            measure[0].minIntrinsicHeight(constraints.maxWidth)
-                        val buttonsPlaceable = measure[0].measure(
-                            constraints.copy(maxHeight = buttonsHeight, minHeight = 0)
+                Layout(
+                    modifier = Modifier.padding(if (notContentPadding) PaddingValues() else contentPadding),
+                    content = {
+                        dialogScope.ButtonsLayout(
+                            modifier = Modifier.layoutId("buttons"),
+                            content = buttons
                         )
+                        Column(
+                            Modifier.layoutId("content")
+                        ) { content(dialogScope) }
+                    }
+                ) { measure, constraints ->
+                    val buttonsHeight =
+                        measure[0].minIntrinsicHeight(constraints.maxWidth)
+                    val buttonsPlaceable = measure[0].measure(
+                        constraints.copy(maxHeight = buttonsHeight, minHeight = 0)
+                    )
 
-                        val contentPlaceable = measure[1].measure(
-                            constraints.copy(
-                                maxHeight = maxHeightPx - buttonsPlaceable.height,
-                                minHeight = 0
-                            )
+                    val contentPlaceable = measure[1].measure(
+                        constraints.copy(
+                            maxHeight = maxHeightPx - buttonsPlaceable.height,
+                            minHeight = 0
                         )
+                    )
 
-                        val height =
-                            min(maxHeightPx, buttonsPlaceable.height + contentPlaceable.height)
+                    val height =
+                        min(maxHeightPx, buttonsPlaceable.height + contentPlaceable.height)
 
-                        return@Layout layout(constraints.maxWidth, height) {
-                            contentPlaceable.place(0, 0)
-                            buttonsPlaceable.place(0, height - buttonsPlaceable.height)
-                        }
+                    return@Layout layout(constraints.maxWidth, height) {
+                        contentPlaceable.place(0, 0)
+                        buttonsPlaceable.place(0, height - buttonsPlaceable.height)
                     }
                 }
             }
@@ -139,19 +137,16 @@ fun VerveDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerveBottomDialog(
-    dialogState: DialogState = rememberDialogState(),
-    backgroundColor: Color = DialogGlobalConfig.dialogConfig.backgroundColor,
-    shape: Shape = DialogGlobalConfig.dialogConfig.shape,
-    border: BorderStroke? = DialogGlobalConfig.dialogConfig.border,
-    padding: PaddingValues = DialogGlobalConfig.dialogConfig.padding,
-    contentPadding: PaddingValues = DialogGlobalConfig.dialogConfig.contentPadding,
-    shadowElevation: Dp = DialogGlobalConfig.dialogConfig.shadowElevation,
-    tonalElevation: Dp = DialogGlobalConfig.dialogConfig.tonalElevation,
-    autoDismiss: Boolean = DialogGlobalConfig.dialogConfig.autoDismissPositiveButton,
-    hideDrag: Boolean = DialogGlobalConfig.dialogConfig.bottomHideDrag,
-    enableDrag: Boolean = DialogGlobalConfig.dialogConfig.enableDrag,
-    onDismiss: (DialogState) -> Unit = { it.dismiss() },
-    buttons: @Composable DialogButtonLayout.() -> Unit = {},
+    modifier: Modifier = Modifier,
+    dialogState: BottomDialogState = rememberBottomDialogState(),
+    backgroundColor: Color = DialogGlobalConfig.bottomDialogConfig.backgroundColor,
+    shape: Shape = DialogGlobalConfig.bottomDialogConfig.shape,
+    padding: PaddingValues = DialogGlobalConfig.bottomDialogConfig.padding,
+    autoDismiss: Boolean = DialogGlobalConfig.bottomDialogConfig.autoDismiss,
+    tonalElevation: Dp = DialogGlobalConfig.bottomDialogConfig.tonalElevation,
+    hideDrag: Boolean = DialogGlobalConfig.bottomDialogConfig.bottomHideDrag,
+    enableDrag: Boolean = DialogGlobalConfig.bottomDialogConfig.enableDrag,
+    onDismiss: (BottomDialogState) -> Unit = { it.dismiss() },
     content: @Composable DialogScope.() -> Unit
 ) {
     val dialogScope = remember { DialogScopeImpl(dialogState, autoDismiss) }
@@ -161,12 +156,21 @@ fun VerveBottomDialog(
         confirmValueChange = { newValue ->
             if (enableDrag) true else newValue != SheetValue.Hidden
         })
-    val maxHeight = LocalConfiguration.current.screenHeightDp.dp - (padding.calculateTopPadding() * 2)
-    val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx().toInt() }
+    val focusManager = LocalFocusManager.current
+    dialogScope.CustomCallback {
+        if (sheetState.isVisible){
+            coroutineScope.launch {
+                sheetState.hide()
+            }.invokeOnCompletion {
+                dialogState.isVisible = false
+                focusManager.clearFocus()
+            }
+        }
+    }
 
     DisposableEffect(dialogState.isVisible) {
         if (!dialogState.isVisible) dialogScope.reset()
-        onDispose { }
+        onDispose {}
     }
 
     LaunchedEffect(dialogState.isVisible) {
@@ -180,7 +184,11 @@ fun VerveBottomDialog(
 
     if (dialogState.isVisible) {
         ModalBottomSheet(
+            modifier = modifier,
+            containerColor = backgroundColor,
+            shape = shape,
             sheetState = sheetState,
+            tonalElevation = tonalElevation,
             dragHandle = if (hideDrag) {
                 null
             } else {
@@ -194,44 +202,11 @@ fun VerveBottomDialog(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(contentPadding)
-                        .wrapContentHeight(),
-                    shape = shape,
-                    color = backgroundColor,
-                    border = border,
-                    shadowElevation = shadowElevation,
-                    tonalElevation = tonalElevation
+                        .padding(padding)
+                        .navigationBarsPadding()
+                        .wrapContentHeight()
                 ) {
-                    Layout(
-                        content = {
-                            dialogScope.ButtonsLayout(
-                                modifier = Modifier.layoutId("buttons"),
-                                content = buttons
-                            )
-                            Column(Modifier.layoutId("content")) { content(dialogScope) }
-                        }
-                    ) { measure, constraints ->
-                        val buttonsHeight =
-                            measure[0].minIntrinsicHeight(constraints.maxWidth)
-                        val buttonsPlaceable = measure[0].measure(
-                            constraints.copy(maxHeight = buttonsHeight, minHeight = 0)
-                        )
-
-                        val contentPlaceable = measure[1].measure(
-                            constraints.copy(
-                                maxHeight = maxHeightPx - buttonsPlaceable.height,
-                                minHeight = 0
-                            )
-                        )
-
-                        val height =
-                            min(maxHeightPx, buttonsPlaceable.height + contentPlaceable.height)
-
-                        return@Layout layout(constraints.maxWidth, height) {
-                            contentPlaceable.place(0, 0)
-                            buttonsPlaceable.place(0, height - buttonsPlaceable.height)
-                        }
-                    }
+                    Column { content(dialogScope) }
                 }
             }
         )
