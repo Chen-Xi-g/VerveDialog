@@ -4,6 +4,8 @@ theme: just-the-docs
 
 url: https://chen-xi-g.github.io/
 
+baseurl: /VerveDialog
+
 aux_links:
   Github: https://github.com/Chen-Xi-g/VerveDialog
 

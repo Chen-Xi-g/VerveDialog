@@ -7,7 +7,7 @@ usetocbot: true
 
 <div style="text-align: center;">
   <div>
-      <img src="/assets/images/DialogIcon.png" alt="Dialog Icon">
+      <img src="{{ site.baseurl }}/assets/images/DialogIcon.png" alt="Dialog Icon">
   </div>
 
   <h1 style="font-size: 24px; font-weight: bold; margin: 10px 0;">适用于 Compose 的 Dialog</h1>

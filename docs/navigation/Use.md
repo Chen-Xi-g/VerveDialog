@@ -60,7 +60,7 @@ DialogGlobalConfig.updateInputConfig(defaultDialogInputConfig())
 
 {% tab default 默认弹窗%}
 
-<img src="/assets/images/dialog-default.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -83,7 +83,7 @@ VerveDialog(
 
 {% tab default 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 {: .important }
 
@@ -127,7 +127,7 @@ VerveBottomDialog(
 
 {% tab button 默认弹窗%}
 
-<img src="/assets/images/dialog-default.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -151,7 +151,7 @@ VerveDialog(
 
 {% tab button 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -190,7 +190,7 @@ VerveBottomDialog(
 
 {% tab icon 默认弹窗%}
 
-<img src="/assets/images/dialog-default-icon.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default-icon.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -218,7 +218,7 @@ VerveDialog(
 
 {% tab icon 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom-icon.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom-icon.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -259,7 +259,7 @@ Dialog显示时默认弹出软键盘，设置`focusOnShow=false`则关闭。
 
 {% tab input 默认弹窗%}
 
-<img src="/assets/images/dialog-default-input-show.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default-input-show.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -283,7 +283,7 @@ VerveDialog(
 
 {% tab input 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom-input-show.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom-input-show.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -323,7 +323,7 @@ VerveBottomDialog(
 
 {% tab single 默认弹窗%}
 
-<img src="/assets/images/dialog-default-single.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default-single.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -373,7 +373,7 @@ VerveDialog(
 
 {% tab single 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom-single.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom-single.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -439,7 +439,7 @@ VerveBottomDialog(
 
 {% tab multi 默认弹窗%}
 
-<img src="/assets/images/dialog-default-multi.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-default-multi.png" alt="DefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
@@ -489,7 +489,7 @@ VerveDialog(
 
 {% tab multi 底部弹窗%}
 
-<img src="/assets/images/dialog-bottom-multi.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
+<img src="{{ site.baseurl }}/assets/images/dialog-bottom-multi.png" alt="BottomDefaultDialog" style="max-width: 40%; height: auto;">
 
 ```kotlin
 // 控制Dialog显示隐藏状态
