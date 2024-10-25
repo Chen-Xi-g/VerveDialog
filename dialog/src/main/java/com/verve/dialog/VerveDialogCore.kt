@@ -47,8 +47,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Dialog 标题
- * @param text 文本（来自字符串字面量）
- * @param res 文本（来自字符串资源）
+ * @param text 文本（字符串）
+ * @param res 文本（字符串资源）
  * @param color 文本颜色
  * @param style 文本样式
  * @param padding 标题间距
@@ -79,8 +79,8 @@ fun DialogScope.Title(
 
 /**
  * Dialog 带Icon标题
- * @param text 文本（来自字符串字面量）
- * @param res 文本（来自字符串资源）
+ * @param text 文本（字符串）
+ * @param res 文本（字符串资源）
  * @param color 文本颜色
  * @param style 文本样式
  * @param padding 标题间距
@@ -121,6 +121,7 @@ fun DialogScope.IconTitle(
  * @param color 文本颜色
  * @param style 文本样式
  * @param padding 消息间距
+ * @param alignment 对齐方式
  */
 @Composable
 fun DialogScope.Message(

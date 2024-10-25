@@ -31,15 +31,15 @@
 
 确保你在项目的 `build.gradle` 文件中添加了 Compose 依赖。
 
-```groovy
+```kotlin
 dependencies {
-
+		implementation("com.github.Chen-Xi-g:VerveDialog:Tag")
 }
 ```
 
 ### 初始化配置
 
-您可以在应用启动时初始化全局配置：
+您可以在应用启动时初始化全局配置，不设置则使用默认：
 
 ```kotlin
 DialogGlobalConfig.updateDialogConfig(defaultDialogConfig())
@@ -79,14 +79,19 @@ VerveDialog(
 val dialogState = rememberDialogState()
 
 VerveBottomDialog(
-    dialogState = dialogState,
-    buttons = {
-        PositiveButton("确定")
-        NegativeButton("取消")
-    }
+    dialogState = dialogState
 ) {
     Title(text = "提示")
     Message(text = "这是一个底部Dialog弹窗")
+    Row(
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(top = 15.dp),
+      horizontalArrangement = Arrangement.SpaceAround,
+    ) {
+        NegativeButton("取消")
+        PositiveButton("确认")
+    }
 }
 ```
 
@@ -200,10 +205,20 @@ VerveDialog(
     dialogState = dialogState
 ) {
   	// 调用DialogScope.SingleChoice设置泛型类型的单选列表
-    SingleChoice(list = list, onChoiceChange = { _, item ->
-        Toast.makeText(context, "选择的内容是：$item", Toast.LENGTH_SHORT).show()
-    }) { _, item, _ ->
-        Text(text = item.name)
+    SingleChoice(
+        list = list,
+        onChoiceChange = { index, item ->
+            Log.d(TAG, "选择索引：$index, 选择内容：${item.name}")
+        }
+    ) { index, item, enabled ->
+        Text(
+            text = item.name,
+            color = if (enabled) { // 根据Enable状态设置
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(0.5f)
+            }
+        )
     }
 }
 ```
@@ -250,10 +265,20 @@ VerveDialog(
     dialogState = dialogState
 ) {
   	// 调用DialogScope.MultiChoice设置泛型类型的单选列表
-    MultiChoice(list = list, onCheckedChange = { _, items ->
-        Toast.makeText(context, "选择的内容是：$items", Toast.LENGTH_SHORT).show()
-    }) { _, item, _ ->
-        Text(text = item.name)
+    MultiChoice(
+        list = list2,
+        onChoiceChange = { indices, items ->
+            Log.d(TAG, "选择索引：$indices 选择内容：$items")
+        }
+    ) { index, item, enabled ->
+        Text(
+            text = item.name,
+            color = if (enabled) {
+                MaterialTheme.colorScheme.onSurface
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(0.5f)
+            }
+        )
     }
 }
 ```
