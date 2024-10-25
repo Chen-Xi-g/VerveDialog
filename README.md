@@ -7,7 +7,7 @@
 <p align="center">
 	<a href="https://chen-xi-g.github.io/VerveDialog/">使用文档</a>
 	| 
-	<a href="app/release/verve-dialog-sample.apk">下载Demo</a>
+	<a href="https://github.com/Chen-Xi-g/VerveDialog/releases">下载Demo</a>
 </p>
 
 <p align="center">
