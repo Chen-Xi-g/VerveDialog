@@ -43,13 +43,18 @@ jobs:
       - name: Install jekyll
         run: bundle install
         working-directory: ./docs
+      - name: List build output
+        run: ls -R
+      - name: Create site
+        run: mkdir -p _site
+      - name: List build output 2
+        run: ls -R
       - name: Build with Jekyll
         # Outputs to the './_site' directory by default
         run: bundle exec jekyll build --source docs --baseurl "${{ steps.pages.outputs.base_path }}"
+        working-directory: ./docs
         env:
           JEKYLL_ENV: production
-      - name: List build output
-        run: ls -R ./_site
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
