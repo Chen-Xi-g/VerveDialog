@@ -78,3 +78,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+*/release/baselineProfiles/*
+*/release/output-metadata.json
