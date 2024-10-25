@@ -51,6 +51,8 @@ jobs:
         working-directory: ./docs
         env:
           JEKYLL_ENV: production
+      - name: List docs directory for debugging
+        run: ls -R docs
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
