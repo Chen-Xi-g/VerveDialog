@@ -49,7 +49,7 @@ jobs:
       - name: Create site
         run: mkdir -p _site
         working-directory: docs
-      - name: List build output 2
+      - name: List build output docs
         run: ls
         working-directory: docs
       - name: Build with Jekyll
@@ -58,9 +58,14 @@ jobs:
         working-directory: docs
         env:
           JEKYLL_ENV: production
+      - name: List build output site
+        run: ls
+        working-directory: docs/_site
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_site
 
   # Deployment job
   deploy:
