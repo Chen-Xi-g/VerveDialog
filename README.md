@@ -5,7 +5,7 @@
 	<strong>适用于Compose的Dialog</strong>
 </p>
 <p align="center">
-	<a href="https://chen-xi-g.github.io/">使用文档</a>
+	<a href="https://chen-xi-g.github.io/VerveDialog/">使用文档</a>
 	| 
 	<a href="app/release/verve-dialog-sample.apk">下载Demo</a>
 </p>
@@ -25,7 +25,7 @@
 - **可配置按钮**：可自定义对话框中的按钮布局。
 - **自动关闭**：支持在点击按钮后自动关闭对话框。
 - **底部对话框**：支持底部对话框样式，并可自定义拖拽手柄的显示。
-- **高扩展性：**支持用户根据不同需求进行扩展使用。
+- **高扩展性**：支持用户根据不同需求进行扩展使用。
 
 ## 安装
 
