@@ -1,9 +1,9 @@
 <div align=center>    
     <img src="./images/DialogIcon.png">
 </div>
-<p align="center">
-	<strong>适用于Compose的Dialog</strong>
-</p>
+<div align="center">
+	<h1>适用于Compose的Dialog</h1>
+</div>
 <p align="center">
 	<a href="https://chen-xi-g.github.io/VerveDialog/">使用文档</a>
 	| 
