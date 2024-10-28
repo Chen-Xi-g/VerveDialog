@@ -23,8 +23,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -254,10 +258,10 @@ fun DialogScope.Input(
  * @param item 列表项
  */
 @Composable
-fun <T> DialogScope.DialogListItems(
+internal fun <T> DialogScope.DialogListItems(
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
     list: List<T>,
+    state: LazyListState = rememberLazyListState(),
     closeOnClick: Boolean = true,
     onClick: (index: Int, item: T) -> Unit = { _, _ -> },
     isEnabled: (index: Int, item: T) -> Boolean = { _, _ -> true },
@@ -265,8 +269,7 @@ fun <T> DialogScope.DialogListItems(
 ) {
     BoxWithConstraints {
         LazyColumn(
-            Modifier
-                .then(modifier),
+            modifier = modifier,
             state = state
         ) {
             itemsIndexed(list) { index, it ->
@@ -295,6 +298,8 @@ fun <T> DialogScope.DialogListItems(
  *
  * @param list 列表
  * @param state 列表状态
+ * @param radioButtonColors 单选按钮颜色
+ * @param choiceTextStyle 选择文本样式
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
@@ -304,6 +309,8 @@ fun <T> DialogScope.DialogListItems(
 fun DialogScope.SingleChoiceString(
     list: List<String>,
     state: LazyListState = rememberLazyListState(),
+    radioButtonColors: RadioButtonColors = RadioButtonDefaults.colors(),
+    choiceTextStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     isEnabled: (index: Int, item: String) -> Boolean = { _, _ -> true },
     initialSelection: Int = -1,
     waitForPositiveButton: Boolean = true,
@@ -315,25 +322,27 @@ fun DialogScope.SingleChoiceString(
         isEnabled = isEnabled,
         initialSelection = initialSelection,
         waitForPositiveButton = waitForPositiveButton,
-        onChoiceChange = onChoiceChange,
-        radioButton = { index, _, selected, enabled, onClick ->
+        radioButton = { _, _, selected, enabled, onClick ->
             RadioButton(
                 selected = selected,
                 onClick = onClick,
-                enabled = enabled
+                enabled = enabled,
+                colors = radioButtonColors
             )
         },
-    ) { _, item, enabled ->
-        Text(
-            item,
-            color = if (enabled) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-            },
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+        choiceText = { _, item, enabled ->
+            Text(
+                item,
+                color = if (enabled) {
+                    choiceTextStyle.color
+                } else {
+                    choiceTextStyle.color.copy(0.5f)
+                },
+                style = choiceTextStyle
+            )
+        },
+        onChoiceChange = onChoiceChange
+    )
 }
 
 /**
@@ -344,9 +353,9 @@ fun DialogScope.SingleChoiceString(
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
- * @param onChoiceChange 选择回调
  * @param radioButton 单选按钮布局
  * @param choiceText 选择文本布局
+ * @param onChoiceChange 选择回调
  */
 @Composable
 fun <T> DialogScope.SingleChoice(
@@ -355,9 +364,9 @@ fun <T> DialogScope.SingleChoice(
     isEnabled: (index: Int, item: T) -> Boolean = { _, _ -> true },
     initialSelection: Int = -1,
     waitForPositiveButton: Boolean = true,
-    onChoiceChange: (index: Int, item: T) -> Unit,
     radioButton: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onClick: () -> Unit) -> Unit,
-    choiceText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
+    choiceText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit,
+    onChoiceChange: (index: Int, item: T) -> Unit
 ) {
     var selectedItem by remember { mutableIntStateOf(initialSelection) }
     PositiveButtonState(isValid = selectedItem != -1)
@@ -413,7 +422,7 @@ fun <T> DialogScope.SingleChoice(
  * @param choiceText 选择文本布局
  */
 @Composable
-fun <T> SingleChoiceItem(
+internal fun <T> SingleChoiceItem(
     item: T,
     index: Int,
     selected: Boolean,
@@ -437,6 +446,8 @@ fun <T> SingleChoiceItem(
  *
  * @param list 列表
  * @param state 列表状态
+ * @param checkBoxColors 多选框颜色
+ * @param checkedTextStyle 选择文本样式
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item索引集合
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
@@ -446,6 +457,8 @@ fun <T> SingleChoiceItem(
 fun DialogScope.MultiChoiceString(
     list: List<String>,
     state: LazyListState = rememberLazyListState(),
+    checkBoxColors: CheckboxColors = CheckboxDefaults.colors(),
+    checkedTextStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     isEnabled: (index: Int, item: String) -> Boolean = { _, _ -> true },
     initialSelection: Set<Int> = setOf(),
     waitForPositiveButton: Boolean = true,
@@ -457,25 +470,27 @@ fun DialogScope.MultiChoiceString(
         isEnabled = isEnabled,
         initialSelection = initialSelection,
         waitForPositiveButton = waitForPositiveButton,
-        onChoiceChange = onChoiceChange,
         checkBox = { index, item, selected, enabled, onCheckedChange ->
             Checkbox(
                 checked = selected,
                 onCheckedChange = onCheckedChange,
-                enabled = enabled
+                enabled = enabled,
+                colors = checkBoxColors
             )
         },
-    ) { _, item, enabled ->
-        Text(
-            item,
-            color = if (enabled) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-            },
-            style = MaterialTheme.typography.bodyMedium
-        )
-    }
+        checkedText = { _, item, enabled ->
+            Text(
+                item,
+                color = if (enabled) {
+                    checkedTextStyle.color
+                } else {
+                    checkedTextStyle.color.copy(0.5f)
+                },
+                style = checkedTextStyle
+            )
+        },
+        onChoiceChange = onChoiceChange,
+    )
 }
 
 /**
@@ -486,8 +501,9 @@ fun DialogScope.MultiChoiceString(
  * @param isEnabled 指定Item是否可点击
  * @param initialSelection 初始化选择的Item索引集合
  * @param waitForPositiveButton 是否点击确定按钮后返回选择结果
- * @param onChoiceChange 选择回调
+ * @param checkBox 多选框布局
  * @param checkedText 选择文本布局
+ * @param onChoiceChange 选择回调
  */
 @Composable
 fun <T> DialogScope.MultiChoice(
@@ -496,9 +512,9 @@ fun <T> DialogScope.MultiChoice(
     isEnabled: (index: Int, item: T) -> Boolean = { _, _ -> true },
     initialSelection: Set<Int> = setOf(),
     waitForPositiveButton: Boolean = true,
-    onChoiceChange: (indices: Set<Int>, items: Set<T>) -> Unit,
     checkBox: @Composable (index: Int, item: T, selected: Boolean, enabled: Boolean, onCheckedChange: ((Boolean) -> Unit)?) -> Unit,
-    checkedText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit
+    checkedText: @Composable (index: Int, item: T, enabled: Boolean) -> Unit,
+    onChoiceChange: (indices: Set<Int>, items: Set<T>) -> Unit
 ) {
     var selectedItems by remember { mutableStateOf(initialSelection) }
 
@@ -508,7 +524,6 @@ fun <T> DialogScope.MultiChoice(
 
     val onChecked = { index: Int ->
         if (isEnabled(index, list[index])) {
-            /* Have to create temp var as mutableState doesn't trigger on adding to set */
             val newSelectedItems = selectedItems.toMutableSet()
             if (index in selectedItems) {
                 newSelectedItems.remove(index)
@@ -556,7 +571,7 @@ fun <T> DialogScope.MultiChoice(
  * @param checkedText 选择文本布局
  */
 @Composable
-fun <T> MultiChoiceItem(
+internal fun <T> MultiChoiceItem(
     item: T,
     index: Int,
     selected: Boolean,
