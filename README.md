@@ -1,8 +1,8 @@
 <div align=center>    
   	<img src="./images/LibraryCover.jpg">
 </div>
-<img src="./images/DialogIcon.png">
 <div align="center">
+	<img src="./images/DialogIcon.png">
 	<h1>适用于Compose的Dialog</h1>
 </div>
 <p align="center">
@@ -10,8 +10,6 @@
 	| 
 	<a href="https://github.com/Chen-Xi-g/VerveDialog/releases">下载Demo</a>
 </p>
-
-
 <p align="center">
   <a href="https://jitpack.io/#Chen-Xi-g/VerveDialog"><img src="https://jitpack.io/v/Chen-Xi-g/VerveDialog.svg"/></a>
   <a href="https://developer.android.com/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose%20-63C487?logo=jetpackcompose&logoColor=white"/></a>
