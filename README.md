@@ -1,6 +1,7 @@
 <div align=center>    
-    <img src="./images/DialogIcon.png">
+  	<img src="./images/LibraryCover.jpg">
 </div>
+<img src="./images/DialogIcon.png">
 <div align="center">
 	<h1>适用于Compose的Dialog</h1>
 </div>
@@ -9,6 +10,7 @@
 	| 
 	<a href="https://github.com/Chen-Xi-g/VerveDialog/releases">下载Demo</a>
 </p>
+
 
 <p align="center">
   <a href="https://jitpack.io/#Chen-Xi-g/VerveDialog"><img src="https://jitpack.io/v/Chen-Xi-g/VerveDialog.svg"/></a>
