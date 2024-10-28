@@ -41,7 +41,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -152,18 +151,21 @@ fun DialogScope.Message(
  * @param border 边框
  * @param padding 与Dialog的间距
  * @param contentPadding 输入框内部间距
- * @param waitForPositiveButton 是否等待点击确定按钮
+ * @param waitForPositiveButton 等待点击确定按钮后返回输入文本
  * @param focusRequester 输入框焦点请求
  * @param focusOnShow 是否在显示时显示软键盘
  * @param alignment 对齐方式
- * @param isTextValid 文本是否有效
+ * @param isTextValid 输入文本校验，校验未通过时禁用确定按钮
  * @param onInput 输入回调
  */
 @Composable
 fun DialogScope.Input(
     placeholder: String = "",
     prefill: String = "",
+    textStyle: TextStyle = DialogGlobalConfig.dialogInputConfig.textStyle,
+    placeholderStyle: TextStyle = DialogGlobalConfig.dialogInputConfig.placeholderStyle,
     border: BorderStroke = DialogGlobalConfig.dialogInputConfig.border,
+    shape: RoundedCornerShape = DialogGlobalConfig.dialogInputConfig.shape,
     padding: PaddingValues = DialogGlobalConfig.dialogInputConfig.padding,
     contentPadding: PaddingValues = DialogGlobalConfig.dialogInputConfig.contentPadding,
     waitForPositiveButton: Boolean = true,
@@ -173,50 +175,48 @@ fun DialogScope.Input(
     isTextValid: (String) -> Boolean = { true },
     onInput: (String) -> Unit = {}
 ) {
+    // 当前输入文本
     var text by remember { mutableStateOf(prefill) }
+    // 校验文本是否符合规则
     val valid = remember(text) { isTextValid(text) }
+    // 如果是BottomSheet需要创建协程处理动画
     val coroutineScope = if (state.isBottomSheet) {
         rememberCoroutineScope()
     } else {
         null
     }
-
+    // 设置确定按钮是否可用
     PositiveButtonState(isValid = valid)
-
+    // 输入内容回调
     if (waitForPositiveButton) {
         Callback { onInput(text) }
     }
 
+    // 自定义输入框
     BasicTextField(
         value = text,
         onValueChange = { newText ->
+            // 更新文本
             text = newText
             if (!waitForPositiveButton) {
                 onInput(newText)
             }
         },
+        textStyle = textStyle, // 文本样式
         modifier = Modifier
-            .focusRequester(focusRequester)
+            .focusRequester(focusRequester) // 输入框焦点
             .fillMaxWidth()
-            .padding(padding)
-            .border(border, shape = RoundedCornerShape(8.dp))
-            .padding(contentPadding),
-        textStyle = TextStyle(
-            color = Color.Black,
-            fontSize = 14.sp,
-            textAlign = alignment.textAlignment()
-        ), // 文本样式
+            .padding(padding) // 与Dialog的间距
+            .border(border = border, shape = shape) // 边框
+            .padding(contentPadding), // 输入框内部间距
         decorationBox = { innerTextField ->
+            // 占位符
             Box(contentAlignment = alignment) {
                 // 如果没有输入内容，显示占位符
                 if (text.isEmpty()) {
                     Text(
                         text = placeholder, // 占位符文本
-                        style = TextStyle(
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            textAlign = alignment.textAlignment()
-                        )
+                        style = placeholderStyle
                     )
                 }
                 // 这是实际的输入框
@@ -225,8 +225,10 @@ fun DialogScope.Input(
         }
     )
 
+    // 如果需要在显示时显示软键盘
     if (focusOnShow) {
         DisposableEffect(Unit) {
+            // 如果是BottomSheet，需要延迟显示软键盘
             if (state.isBottomSheet) {
                 coroutineScope?.launch {
                     delay(AnimationConstants.DefaultDurationMillis.toLong())

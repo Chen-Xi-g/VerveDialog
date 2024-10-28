@@ -9,9 +9,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -378,11 +376,22 @@ fun defaultDialogMessageConfig(
 
 /**
  * Dialog输入框配置
+ *
+ * @param border 输入框边框
+ * @param shape 输入框形状
+ * @param textStyle 输入框文本样式
+ * @param placeholderStyle 输入框占位符文本样式
+ * @param padding 输入框padding
+ * @param contentPadding 输入框内容padding
+ * @param focusOnShow 是否在显示时自动获取焦点
+ * @param alignment 输入框文本位置
  */
 @Stable
 class DialogInputConfig(
     var border: BorderStroke,
-    var style: TextStyle,
+    var shape: RoundedCornerShape,
+    var textStyle: TextStyle,
+    var placeholderStyle: TextStyle,
     var padding: PaddingValues,
     var contentPadding: PaddingValues,
     var focusOnShow: Boolean,
@@ -390,7 +399,9 @@ class DialogInputConfig(
 ) {
     fun copy(
         border: BorderStroke = this.border,
-        style: TextStyle = this.style,
+        shape: RoundedCornerShape = this.shape,
+        textStyle: TextStyle = this.textStyle,
+        placeholderStyle: TextStyle = this.placeholderStyle,
         padding: PaddingValues = this.padding,
         contentPadding: PaddingValues = this.contentPadding,
         focusOnShow: Boolean = this.focusOnShow,
@@ -398,7 +409,9 @@ class DialogInputConfig(
     ): DialogInputConfig {
         return DialogInputConfig(
             border = border,
-            style = style,
+            shape = shape,
+            textStyle = textStyle,
+            placeholderStyle = placeholderStyle,
             padding = padding,
             contentPadding = contentPadding,
             focusOnShow = focusOnShow,
@@ -409,7 +422,9 @@ class DialogInputConfig(
     override fun toString(): String {
         return "DialogInputConfig(" +
                 "border=$border, " +
-                "style=$style, " +
+                "shape=$shape, " +
+                "textStyle=$textStyle, " +
+                "placeholderStyle=$placeholderStyle, " +
                 "padding=$padding, " +
                 "contentPadding=$contentPadding, " +
                 "focusOnShow=$focusOnShow, " +
@@ -423,10 +438,23 @@ class DialogInputConfig(
  */
 fun defaultDialogInputConfig(
     border: BorderStroke = BorderStroke(1.dp, Color.Gray),
-    style: TextStyle = TextStyle.Default.copy(
+    shape: RoundedCornerShape = RoundedCornerShape(8.dp),
+    textStyle: TextStyle = TextStyle.Default.copy(
         platformStyle = PlatformTextStyle(
             includeFontPadding = true
         ),
+        color = Color.Black,
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.2.sp
+    ),
+    placeholderStyle: TextStyle = TextStyle.Default.copy(
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = true
+        ),
+        color = Color.Black.copy(alpha = 0.5f),
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
@@ -439,7 +467,9 @@ fun defaultDialogInputConfig(
     alignment: Alignment = Alignment.CenterStart
 ): DialogInputConfig = DialogInputConfig(
     border = border,
-    style = style,
+    shape = shape,
+    textStyle = textStyle,
+    placeholderStyle = placeholderStyle,
     padding = padding,
     contentPadding = contentPadding,
     focusOnShow = focusOnShow,
