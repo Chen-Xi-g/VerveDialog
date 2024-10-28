@@ -201,7 +201,9 @@ DialogGlobalConfig.updateInputConfig(config: DialogInputConfig)
 | 参数名         | 类型                     | 默认值                                                        | 描述                  |
 |----------------|--------------------------|---------------------------------------------------------------|-----------------------|
 | border         | BorderStroke             | BorderStroke(1.dp, Color.Gray)                               | 输入框边框            |
-| style          | TextStyle                | TextStyle.Default.copy(...)                                   | 输入框样式            |
+| shape | RoundedCornerShape | RoundedCornerShape(8.dp) | 输入框形状 |
+| textStyle     | TextStyle                | TextStyle.Default.copy(...)                                   | 输入框文本样式      |
+| placeholderStyle | TextStyle | TextStyle.Default.copy(...) | 输入框占位符文本样式 |
 | padding        | PaddingValues            | PaddingValues(start = 15.dp, end = 15.dp, top = 10.dp)      | 输入框的内边距        |
 | contentPadding | PaddingValues            | PaddingValues(10.dp)                                         | 输入内容的内边距      |
 | focusOnShow    | Boolean                  | true                                                          | 显示时是否自动获取焦点 |

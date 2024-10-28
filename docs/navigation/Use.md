@@ -351,18 +351,18 @@ VerveDialog(
   // 泛型集合单选
     SingleChoice(
         list = list,
-        onChoiceChange = { index, item ->
-            Log.d(TAG, "选择索引：$index, 选择内容：${item.name}")
+        choiceText = { index, item, enabled -> 
+            Text(
+              text = item.name,
+              color = if (enabled) {
+                  MaterialTheme.colorScheme.onSurface
+              } else {
+                  MaterialTheme.colorScheme.onSurface.copy(0.5f)
+              }
+            )
         }
-    ) { index, item, enabled ->
-        Text(
-            text = item.name,
-            color = if (enabled) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-            }
-        )
+    ) { index, item ->
+        Log.d(TAG, "选择索引：$index, 选择内容：${item.name}")
     }
 }
 ```
@@ -400,18 +400,25 @@ VerveBottomDialog(
   // 泛型集合单选
     SingleChoice(
         list = list2,
-        onChoiceChange = { index, item ->
-            Log.d(TAG, "选择索引：$index, 选择内容：${item.name}")
+        radioButton = { index, item, selected, enabled, onClick ->
+            RadioButton(
+                selected = selected,
+                onClick = onClick,
+                enabled = enabled
+            )
+        },
+	      choiceText = { index, item, enabled ->
+            Text(
+                text = item.name,
+                color = if (enabled) { // 根据Enable状态设置
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                }
+            )
         }
-    ) { index, item, enabled ->
-        Text(
-            text = item.name,
-            color = if (enabled) { // 根据Enable状态设置
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-            }
-        )
+    ) { index, item ->
+        Log.d(TAG, "选择索引：$index, 选择内容：${item.name}")
     }
 }
 ```
@@ -467,19 +474,26 @@ VerveDialog(
   // 泛型集合多选，indices：当前已选择的所有索引，items：当前已选择的所有数据
     MultiChoice(
         list = list2,
-        onChoiceChange = { indices, items ->
-            Log.d(TAG, "选择索引：$indices 选择内容：$items")
+      	checkBox = { index, item, selected, enabled, onCheckedChange ->
+            Checkbox(
+                checked = selected,
+                onCheckedChange = onCheckedChange,
+                enabled = enabled
+            )
+        },
+        checkedText = { index, item, enabled ->
+            Text(
+                text = item.name,
+                color = if (enabled) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(0.5f)
+                }
+            )
         }
-    ) { index, item, enabled ->
-        Text(
-            text = item.name,
-            color = if (enabled) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurface.copy(0.5f)
-            }
-        )
-    }
+    ){ indices, items ->
+        Log.d(TAG, "选择索引：$indices 选择内容：$items")
+    } 
 }
 ```
 
