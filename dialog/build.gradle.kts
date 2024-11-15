@@ -4,9 +4,9 @@ plugins {
     `maven-publish`
 }
 
-val GROUP_ID = "com.verve.dialog"
+val GROUP_ID = properties["JITPACK_GROUP_ID"] as String
 val ARTIFACT_ID = "core"
-val VERSION = "1.0.1-beta.3"
+val VERSION = properties["JITPACK_VERSION"] as String
 
 group = GROUP_ID
 version = VERSION

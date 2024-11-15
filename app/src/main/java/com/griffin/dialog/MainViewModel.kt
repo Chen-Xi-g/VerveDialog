@@ -34,4 +34,6 @@ sealed class DialogIntent() {
     data class BottomShowKeyboardDialog(val isShow: Boolean = false) : DialogIntent()
     data class BottomStringSingleChoiceDialog(val isShow: Boolean = false) : DialogIntent()
     data class BottomStringMultiChoiceDialog(val isShow: Boolean = false) : DialogIntent()
+
+    data class TextPickerDialog(val isShow: Boolean = false) : DialogIntent()
 }

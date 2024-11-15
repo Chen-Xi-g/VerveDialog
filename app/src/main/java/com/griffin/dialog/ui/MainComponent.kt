@@ -46,6 +46,7 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
     val bottomShowKeyboardDialogState = rememberBottomDialogState()
     val bottomStringSingleChoiceDialog = rememberBottomDialogState()
     val bottomStringMultiChoiceDialog = rememberBottomDialogState()
+    val textPicker = rememberDialogState()
     LaunchedEffect(Unit) {
         viewModel.dialogIntent.collectLatest {
             when (it) {
@@ -68,6 +69,7 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
                 is DialogIntent.NotKeyboardDialog -> {
                     notKeyboardDialogState.isVisible = it.isShow
                 }
+
                 is DialogIntent.ShowKeyboardDialog -> {
                     showKeyboardDialogState.isVisible = it.isShow
                 }
@@ -79,23 +81,33 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
                 is DialogIntent.StringMultiChoiceDialog -> {
                     stringMultiChoiceDialog.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomIconTitleDialog -> {
                     bottomIconTitleDialogState.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomNotKeyboardDialog -> {
                     bottomNotKeyboardDialogState.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomShowKeyboardDialog -> {
                     bottomShowKeyboardDialogState.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomStringMultiChoiceDialog -> {
                     bottomStringMultiChoiceDialog.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomStringSingleChoiceDialog -> {
                     bottomStringSingleChoiceDialog.isVisible = it.isShow
                 }
+
                 is DialogIntent.BottomDefaultDialog -> {
                     bottomDefaultDialogState.isVisible = it.isShow
+                }
+
+                is DialogIntent.TextPickerDialog -> {
+                    textPicker.isVisible = it.isShow
                 }
             }
         }
@@ -114,6 +126,7 @@ fun MainComponent(viewModel: MainViewModel = MainViewModel()) {
     BottomShowKeyboard(state = bottomShowKeyboardDialogState)
     BottomStringSingleChoiceDialog(state = bottomStringSingleChoiceDialog)
     BottomStringMultiChoiceDialog(state = bottomStringMultiChoiceDialog)
+    TextPicker(state = textPicker)
     DialogSample(viewModel = viewModel)
 }
 
@@ -149,11 +162,11 @@ fun DialogSample(viewModel: MainViewModel) {
                 viewModel.showDialog(DialogIntent.StringSingleChoiceDialog(true))
             }
 
-            7 ->{
+            7 -> {
                 viewModel.showDialog(DialogIntent.StringMultiChoiceDialog(true))
             }
         }
-    }) {
+    }, bottomClickCallback = {
         when (it) {
             0 -> {
                 viewModel.showDialog(DialogIntent.BottomDefaultDialog(true))
@@ -175,8 +188,14 @@ fun DialogSample(viewModel: MainViewModel) {
                 viewModel.showDialog(DialogIntent.BottomStringSingleChoiceDialog(true))
             }
 
-            5 ->{
+            5 -> {
                 viewModel.showDialog(DialogIntent.BottomStringMultiChoiceDialog(true))
+            }
+        }
+    }) {
+        when (it) {
+            0 -> {
+                viewModel.showDialog(DialogIntent.TextPickerDialog(true))
             }
         }
     }
@@ -184,9 +203,30 @@ fun DialogSample(viewModel: MainViewModel) {
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun DialogList(clickCallback: (position: Int) -> Unit, bottomClickCallback: (position: Int) -> Unit) {
-    val defList = mutableListOf("默认弹窗", "Icon Title", "禁用Positive", "多按钮", "输入框-不显示软键盘", "输入框-显示软键盘", "单选", "多选")
-    val bottomList = mutableListOf("默认弹窗", "Icon Title", "输入框-不显示软键盘", "输入框-显示软键盘", "单选框", "多选框")
+fun DialogList(
+    clickCallback: (position: Int) -> Unit,
+    bottomClickCallback: (position: Int) -> Unit,
+    extendClickCallback: (position: Int) -> Unit
+) {
+    val defList = mutableListOf(
+        "默认弹窗",
+        "Icon Title",
+        "禁用Positive",
+        "多按钮",
+        "输入框-不显示软键盘",
+        "输入框-显示软键盘",
+        "单选",
+        "多选"
+    )
+    val bottomList = mutableListOf(
+        "默认弹窗",
+        "Icon Title",
+        "输入框-不显示软键盘",
+        "输入框-显示软键盘",
+        "单选框",
+        "多选框"
+    )
+    val extendList = mutableListOf("文本选择器")
 
     LazyColumn(
         modifier = Modifier
@@ -241,7 +281,33 @@ fun DialogList(clickCallback: (position: Int) -> Unit, bottomClickCallback: (pos
                 horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
             ) {
                 for ((index, item) in bottomList.withIndex()) {
-                    AssistChip(onClick = { bottomClickCallback(index) }, label = { Text(text = item) })
+                    AssistChip(
+                        onClick = { bottomClickCallback(index) },
+                        label = { Text(text = item) })
+                }
+            }
+        }
+
+        // 扩展组件
+        stickyHeader {
+            Text(
+                text = "扩展组件",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, MaterialTheme.shapes.small)
+                    .padding(10.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        item {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
+            ) {
+                for ((index, item) in extendList.withIndex()) {
+                    AssistChip(
+                        onClick = { extendClickCallback(index) },
+                        label = { Text(text = item) })
                 }
             }
         }

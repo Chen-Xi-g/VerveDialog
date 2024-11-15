@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "Verve Dialog"
 include(":app")
 include(":dialog")
+include(":extend")

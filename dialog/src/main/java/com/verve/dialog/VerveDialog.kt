@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,11 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
@@ -75,10 +71,6 @@ fun VerveDialog(
         onDispose { }
     }
 
-    val maxHeight = LocalConfiguration.current.screenHeightDp.dp
-    val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx().toInt() }
-    val maxWidth = LocalConfiguration.current.screenWidthDp.dp
-
     if (dialogState.isVisible) {
         Dialog(
             properties = properties,
@@ -87,7 +79,6 @@ fun VerveDialog(
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .sizeIn(maxHeight = maxHeight, maxWidth = maxWidth)
                     .padding(padding)
                     .wrapContentHeight(),
                 shape = shape,
@@ -116,13 +107,13 @@ fun VerveDialog(
 
                     val contentPlaceable = measure[1].measure(
                         constraints.copy(
-                            maxHeight = maxHeightPx - buttonsPlaceable.height,
+                            maxHeight = constraints.maxHeight - buttonsPlaceable.height,
                             minHeight = 0
                         )
                     )
 
                     val height =
-                        min(maxHeightPx, buttonsPlaceable.height + contentPlaceable.height)
+                        min(constraints.maxHeight, buttonsPlaceable.height + contentPlaceable.height)
 
                     return@Layout layout(constraints.maxWidth, height) {
                         contentPlaceable.place(0, 0)
